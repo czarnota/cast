@@ -228,7 +228,7 @@ void cast_panic_implementation(const char *format, ...)
     ;
 #define cast_panic(msg, ...)                                                   \
 	cast_panic_implementation("cast: panic in %s():%d: " msg "\n",         \
-				  __func__, __LINE__, ##__VA_ARGS__)
+				  __func__, __LINE__, __VA_ARGS__)
 
 /**
  * Shift all least significant zeros right.
@@ -295,8 +295,8 @@ int cast_try_llong_from_str(long long *dst, const char *str);
 	{                                                                      \
 		dst_type tmp = 0;                                              \
 		if (try_##dst_type_name##_from_##src_type_name(&tmp, src)) {   \
-			cast_panic("failed to convert " #src_type_name         \
-				   " to " #dst_type_name);                     \
+			cast_panic("failed to convert %s to %s",               \
+				   #src_type_name, #dst_type_name);            \
 			return tmp;                                            \
 		}                                                              \
 		return tmp;                                                    \
@@ -727,6 +727,7 @@ CAST_DEFINE_FROM(bool, bool, const char *, str)
 #include <inttypes.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #ifndef CAST_CUSTOM_PANIC_IMPLEMENTATION
 void cast_panic_implementation(const char *format, ...)
