@@ -3,8 +3,8 @@
 
 <svg
    width="62.224983mm"
-   height="66.470451mm"
-   viewBox="0 0 62.224983 66.470451"
+   height="75.659943mm"
+   viewBox="0 0 62.224983 75.659943"
    version="1.1"
    id="svg1"
    inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="1.0983804"
-     inkscape:cx="174.34761"
-     inkscape:cy="210.76487"
+     inkscape:zoom="2.5852504"
+     inkscape:cx="53.766551"
+     inkscape:cy="169.22925"
      inkscape:window-width="1920"
      inkscape:window-height="1080"
      inkscape:window-x="0"
@@ -169,5 +169,27 @@
          inkscape:transform-center-y="0.11480832"
          transform="matrix(0.10568861,-0.10568861,0.10568861,0.10568861,70.386246,68.194227)" />
     </g>
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#b88100;stroke-width:0.264583"
+       x="84.641502"
+       y="127.49329"
+       id="text3"><tspan
+         sodipodi:role="line"
+         id="tspan3"
+         style="stroke-width:0.264583"
+         x="84.641502"
+         y="127.49329" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#b88100;stroke-width:0.264583"
+       x="83.309692"
+       y="126.47495"
+       id="text6"><tspan
+         id="tspan6"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46667px;font-family:Sans;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.264583"
+         x="83.309692"
+         y="126.47495"
+         sodipodi:role="line">cast.h</tspan></text>
   </g>
 </svg>
