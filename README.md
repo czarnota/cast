@@ -2,34 +2,30 @@
 
  <p align="center">
  <img src="cast.svg" alt="A logo portraying a magic wand" /><br />
- Single header type conversions library
+ Single header, type conversions library
  </p>
-
- cast.h
- ======
-
 
  Motivation
  ----------
 
- Properly converting between types is a tedious task.
+ Proper conversion between types is a tedious task.
 
  - Some conversions result in a loss of data, implementation defined behavior
-   or even undefined behavior (damn nasal deamons).
+   or even undefined behavior ([nasal deamons](https://en.wikipedia.org/wiki/Undefined_behavior)).
  - Converting between types using casting operators `(type)`,
-   does not convey clear the intention of the programmer. Is the cast done,
+   does not convey a clear the intention of the programmer. Is the cast done,
    because the value is guaranteed to fit destination type? Is it done
    because truncating the data is expected?
  - Casting operators silence compiler warnings about conversions. If there is
-   a conversion `(uint8_t)var`, where `var` is `uint32_t`, and in future the code
-   is changed, so that type of `var` becomes `float`, most likely the code
+   a conversion `(uint8_t)var`, where `var` is `uint32_t`, and in future the
+   code is changed, so that type of `var` becomes `float`, most likely the code
    where conversion occurs should be reviewed again, but it can be overlooked,
-   because an expression which uses a casting operator usually does not produce
-   warnings.
- - Always manually writing conditions to check if value fits a given range is
+   because an expression which uses such casting operator usually does not
+   produce warnings.
+ - Manually writing conditions to check if value fits a given range can be
    error prone.
 
- This library of helper function was created to adress these problems.
+ This library of helper functions was created to make dealing with these problems easier.
 
  And let's be honest. The world just needs an another C single header library.
 
@@ -38,104 +34,114 @@
  ------------
 
  `cast.h` is a
-[STB-style](https://github.com/nothings/stb/blob/master/docs/stb_howto.txt)
- single header library, because single header libraries are easy to integrate.
+ [STB-style](https://github.com/nothings/stb/blob/master/docs/stb_howto.txt)
+ single header library, because such libraries are easier to integrate into
+ projects.
 
  Just drop in `cast.h` directly into your project and create a `.c` file with
  the following contents:
 
  ```c
- // cast.c
+ // a translation unit where you want to implement the cast library
  #define CAST_IMPLEMENTATION
  #include "cast.h"
  ```
 
  Once you've done that, you can include `cast.h` in other translation units
-and start using conversion functions.
+ and start using conversion functions.
 
  ```c
- // other translation unit
-
- #include <stdint.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <inttypes.h>
-
+ // in other translation units where you want to use conversion functions
  #include "cast.h"
-
- int main(int argc, char **argv)
- {
- 	uint8_t count = 0;
-	// non-panicking variant
- 	if (try_u8_from_int(&count, argc)) {
- 		printf("Too many arguments\n");
- 		return EXIT_FAILURE;
- 	}
- 	printf("count %u\n", count);
-
- 	if (count < 30) {
- 		// this would have invoked panic handler is count was greater that INT8_MAX
- 		int8_t x = i8_from_u8(count);
- 		foo(x);
- 	}
-
- 	return 0;
- }
  ```
+
+ For a more in depth explanation refer to <https://github.com/nothings/stb/blob/master/docs/stb_howto.txt>
 
  Usage
  -----
 
  The library provides two kinds of functions:
 
- - Error returning functions - these functions are in form of
+ - **Error returning functions** - these functions are in form of
    `try_{T'}_from_{U'}(T* dst, U src)` and they return an error on failure.
-   These function can be used in cases where it is not guaranteed that
-   value will fit.
+   These functions can be used in cases where value is not guaranteed to
+   fit the destination type and you want to provide error handling for cases
+   where it does not fit.
 
- - Constraint handler invoking functions - these functions are in form of
-   `{T'}_from_{U'}(U src)` and they invoke constaint handler on failure. The
-   default behavior of constraing handler is to call `exit(1)` and crash the
-   application. This function can be used in cases where conversion is
-expected to succeed and failure is a programming error or security error,
-which shall lead to immediate program termination.
+ - **Panic handler invoking functions** - these functions are in form of
+   `{T'}_from_{U'}(U src)` and they invoke the panic handler on failure.
+   The default behavior of the panic handler is to call `exit(1)` and crash the
+   application. Such functions should be used in cases where conversion is
+   expected to succeed and failure is a unexpected bug or security error,
+   which shall lead to immediate program termination.
+
+ In order to make function conversion names shorter and more memorable,
+ the `T'` and `U'` are short versions of the type
+ `T` and `U` type names respectively. Here is a full list of supported types:
+
+- `T`: `uint8_t`, `T'`: `u8`
+- `T`: `uint16_t`, `T'`: `u16`
+- `T`: `uint32_t`, `T'`: `u32`
+- `T`: `uint64_t`, `T'`: `u64`
+- `T`: `int8_t`, `T'`: `i8`
+- `T`: `int16_t`, `T'`: `i16`
+- `T`: `int32_t`, `T'`: `i32`
+- `T`: `int64_t`, `T'`: `i64`
+- `T`: `short`, `T'`: `short`
+- `T`: `int`, `T'`: `int`
+- `T`: `long`, `T'`: `long`
+- `T`: `long long`, `T'`: `llong`
+- `T`: `unsigned short`, `T'`: `ushort`
+- `T`: `unsigned int`, `T'`: `uint`
+- `T`: `unsigned long`, `T'`: `ulong`
+- `T`: `unsigned long long`, `T'`: `ullong`
+- `T`: `bool`, `T'`: `bool`
+- `T`: `float`, `T'`: `float`
+- `T`: `double`, `T'`: `double`
+- `T`: `size_t`, `T'`: `size`
+- `T`: `ptrdiff_t`, `T'`: `ptrdiff`
+- `T`: `uintptr_t`, `T'`: `uptr`
 
  ### Error returning functions
 
  To convert from `U` type to `T` type use:
 
  ```c
+ // Try to convert `src` of type U to type T stored in `dst` and return
+ // 0 on success and non-zero value on failure. In the case of error `dst`
+ // is left unmodified
  int try_{T'}_from_{U'}(T *dst, U src);
  ```
 
  Example:
 
  ```c
- void foo(int x, short x)
+ void foo(int x, short y)
  {
  	uint32_t dst_u32 = 0U;
  	int err = try_u32_from_int(&dst_u32, x);
  	if (err) {
  		// Handle error
- 		return;
  	}
  	printf("%"PRNu32"\n", dst_u32);
 
  	size_t count = 0U;
- 	int err = try_size_from_short(&count, x);
+ 	int err = try_size_from_short(&count, y);
  	if (err) {
  		// Handle error
- 		return;
  	}
  	printf("%zu\n", count);
  }
  ```
 
- ### Constraint handler invoking functions
+ ### Panic handler invoking functions
 
  To convert from `U` type to `T`, without error handling:
 
  ```c
+ // Convert `src` of type U to type T and return converted value
+ // If the conversion is not possible to do without loss of data / precision
+ // then the panic handler is invoked (default behaviors is to crash the application).
  T {T'}_from_{U'}(U src);
  ```
 
@@ -145,38 +151,130 @@ which shall lead to immediate program termination.
  void print_numbers(int *numbers, int count)
  {
  	if (!numbers)
-		return;
-      // Program will crash if count is < 0
- 	for (size_t i = 0; i < size_from_int(count); ++i) {
-		printf("%d", numbers[i]);
- 	}
+ 		return;
+ 	// Program will crash if count is < 0
+ 	for (size_t i = 0; i < size_from_int(count); ++i)
+ 		printf("%d\n", numbers[i]);
  }
  ```
 
- ### Short names
+ ### Custom panic handler
 
- The `T'` and `U'` as opposed to (`T` and `U`) are short version of type
- names. Here is a full list:
+ You can overwrite the default panic handler (which just calls `exit(1)`),
+ by defining `CAST_CUSTOM_PANIC` constant before including `cast.h`.
 
- - T: `uint8_t`, T': `u8`
- - T: `uint16_t`, T': `u16`
- - T: `uint32_t`, T': `u32`
- - T: `uint64_t`, T': `u64`
- - T: `int8_t`, T': `i8`
- - T: `int16_t`, T': `i16`
- - T: `int32_t`, T': `i32`
- - T: `int64_t`, T': `i64`
- - T: `short`, T': `short`
- - T: `int`, T': `int`
- - T: `long`, T': `long`
- - T: `long long`, T': `llong`
- - T: `unsigned short`, T': `ushort`
- - T: `unsigned int`, T': `uint`
- - T: `unsigned long`, T': `ulong`
- - T: `unsigned long long`, T': `ullong`
- - T: `bool`, T': `bool`
- - T: `float`, T': `float`
- - T: `double`, T': `double`
- - T: `size_t`, T': `size`
- - T: `ptrdiff_t`, T': `ptrdiff`
- - T: `uintptr_t`, T': `uptr`
+ ```c
+ #define CAST_IMPLEMENTATION
+ #define CAST_CUSTOM_PANIC
+ #include "cast.h"
+
+ void cast_panic_impl(const char *msg, ...)
+ {
+ 	printf("your custom panic handler\n");
+ 	exit(1);
+ }
+ ```
+
+ If you define a panic handler that does not exit the application,
+ then `{T'}_from_{U'}()` when error occurrs those functions will return zero
+ initialized values instead of crashing application.
+
+ ### Casting integer types
+
+ Casting integer types will check if destination type
+ can represent the source value. It will return error or invoke
+ panic handler if the source value can't be represented by destination type.
+ This also means that an error will be triggered when you try to convert a negative
+ number to unsigned type.
+
+ Example of casting unsinged types to unsigned types:
+
+ ```c
+ // Will panic if x can't fit size_t
+ size_t count = size_from_u32(x);
+
+ // Will return error if x can't fit size_t
+ if (try_size_from_u32(&count, x)) {
+ 	// handle error
+ }
+ ```
+
+ Example of casting singed types to unsigned types:
+
+ ```c
+ // Will panic if x is too large or is negative
+ size_t count = size_from_int(x);
+
+ // Will return error if x is too large or is negative
+ if (try_size_from_int(&count, x)) {
+ 	// handle error
+ }
+ ```
+
+ Example of casting unsinged types to signed types:
+
+ ```c
+ // Will panic if x is too large
+ short number = short_from_size(x);
+
+ // Will return error if x is too large
+ if (try_short_from_size(&number, x)) {
+ 	// handle error
+ }
+ ```
+
+ Example of casting singed types to signed types:
+
+ ```c
+ // Will panic if x is too large or too small
+ int16_t count = i16_from_int(x);
+
+ // Will return error if x is too large or too small
+ if (try_i16_from_int(&count, x)) {
+ 	// handle error
+ }
+ ```
+
+ ### Casting integer types to floating point types
+
+ Casting an integer type to floating point type will only succeed if the integer
+ type can be represented exactly by the the floating point type without any precision loss.
+
+ For example, this operation will succeed:
+
+ ```c
+ int64_t x = 1234;
+ float variable = float_from_int(x);
+ ```
+
+ This operation however, will invoke the panic handler, because it results in
+ unexpected precision loss
+ ```c
+ int64_t x = 0xFFFFFFFF; // 32 ones
+ float var = 0.0f;
+ // error, because float's mantissa has only 24 bits of precision (with implicit bit)
+ if (try_float_from_i64(&var, x)) {
+ 	// handle error
+ }
+
+ // panic handler will be invoked
+ var = float_from_int(x);
+ ```
+
+ Note that there are integers larger than `0xFFFFFFFF` that can fit `float`, for
+ example `0xF00000000` is a larger number, but it requires less bits to be accurately
+ represented by the `float` type, because trailing zeros will be represented
+ by using larger exponent.
+
+ ```c
+ float ok = float_from_u64(0xF00000000ULL); // no error
+ ```
+
+ Analoguous functions exists for `double` and they allow more integers due
+ to the fact that `double` has 54 bits of mantissa (with implicit bit).
+
+ ```c
+ double ok = double_from_u32(0xFFFFFFFFUL);
+ double also_ok = double_from_u64(0xFFFFFFFFFFFF0000ULL);
+ double not_ok = double_from_u64(0xFFFFFFFFFFFFFFFFULL); // error
+ ```
