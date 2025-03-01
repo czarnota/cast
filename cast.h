@@ -3,6 +3,7 @@
 
 /**
  * <p align="center">
+ * <img src="cast.svg" alt="A logo portraying a magic wand" /><br /></br />
  * Single header type conversions library
  * </p>
  *
