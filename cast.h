@@ -364,20 +364,20 @@ cast_shift_zeros_right(cast_largest_utype value)
 #if defined(__GNU_C__) || defined(__clang__)
 	return value > 0U ? value >> (size_t)__builtin_ctzll(value) : 0U;
 #else
-	if ((val & 0xFFFFFFFFU) == 0U)
-		val >>= 32U;
-	if ((val & 0xFFFFU) == 0U)
-		val >>= 16U;
-	if ((val & 0xFFU) == 0U)
-		val >>= 8U;
-	if ((val & 0xFU) == 0U)
-		val >>= 4U;
-	if ((val & 0x3U) == 0U)
-		val >>= 2U;
-	if ((val & 0x1U) == 0U)
-		val >>= 1U;
+	if ((value & 0xFFFFFFFFU) == 0U)
+		value >>= 32U;
+	if ((value & 0xFFFFU) == 0U)
+		value >>= 16U;
+	if ((value & 0xFFU) == 0U)
+		value >>= 8U;
+	if ((value & 0xFU) == 0U)
+		value >>= 4U;
+	if ((value & 0x3U) == 0U)
+		value >>= 2U;
+	if ((value & 0x1U) == 0U)
+		value >>= 1U;
 
-	return val;
+	return value;
 #endif
 }
 
