@@ -828,6 +828,31 @@ CAST_DEFINE_TRY_S(ptrdiff_t, ptrdiff, PTRDIFF)
 CAST_DEFINE_TRY_F(float, float, 24U)
 CAST_DEFINE_TRY_F(double, double, 54U)
 
+/* List of all types supported by cast library */
+#define CAST_TYPES                                                             \
+	F(uint8_t, u8)                                                         \
+	F(uint16_t, u16)                                                       \
+	F(uint32_t, u32)                                                       \
+	F(uint64_t, u64)                                                       \
+	F(unsigned, uint)                                                      \
+	F(unsigned short, ushort)                                              \
+	F(unsigned long, ulong)                                                \
+	F(unsigned long long, ullong)                                          \
+	F(size_t, size)                                                        \
+	F(uintptr_t, uptr)                                                     \
+	F(int8_t, i8)                                                          \
+	F(int16_t, i16)                                                        \
+	F(int32_t, i32)                                                        \
+	F(int64_t, i64)                                                        \
+	F(int, int)                                                            \
+	F(short, short)                                                        \
+	F(long, long)                                                          \
+	F(long long, llong)                                                    \
+	F(ptrdiff_t, ptrdiff)                                                  \
+	F(float, float)                                                        \
+	F(double, double)                                                      \
+	/* END */
+
 static inline int try_bool_from_str(bool *val, const char *str)
 {
 	if (!val)
@@ -1207,6 +1232,11 @@ static void cast_tests(void)
 
 	TESTS
 #undef TEST
+#undef F
+
+#define F(type, name) printf("%s = %s\n", #type, #name);
+	CAST_TYPES
+#undef F
 }
 #endif
 
