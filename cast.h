@@ -799,6 +799,8 @@ int cast_try_llong_from_str(long long *dst, const char *str);
 				 unsigned long long, ullong)                   \
 	CAST_DEFINE_TRY_F_FROM_U(dst_type, dst_type_name, mantissa_bits,       \
 				 size_t, size)                                 \
+	/* From str */                                                         \
+	CAST_DEFINE_TRY_S_FROM_STR(dst_type, dst_type_name)                    \
 	/* END */
 
 CAST_DEFINE_TRY_U(uint8_t, u8, UINT8_MAX)
