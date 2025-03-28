@@ -853,6 +853,7 @@ CAST_DEFINE_TRY_F(double, double, 54U)
 	F(ptrdiff_t, ptrdiff)                                                  \
 	F(float, float)                                                        \
 	F(double, double)                                                      \
+	F(bool, bool)                                                          \
 	/* END */
 
 static inline int try_bool_from_str(bool *val, const char *str)
