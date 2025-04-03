@@ -651,6 +651,8 @@ int cast_try_llong_from_str(long long *dst, const char *str);
 #define CAST_DEFINE_TRY_U(dst_type, dst_type_name, dst_type_max)               \
 	/* From signed */                                                      \
 	CAST_DEFINE_TRY_U_FROM_S(dst_type, dst_type_name, dst_type_max,        \
+				 signed char, schar)                           \
+	CAST_DEFINE_TRY_U_FROM_S(dst_type, dst_type_name, dst_type_max,        \
 				 int8_t, i8)                                   \
 	CAST_DEFINE_TRY_U_FROM_S(dst_type, dst_type_name, dst_type_max,        \
 				 int16_t, i16)                                 \
@@ -669,6 +671,8 @@ int cast_try_llong_from_str(long long *dst, const char *str);
 	CAST_DEFINE_TRY_U_FROM_S(dst_type, dst_type_name, dst_type_max,        \
 				 ptrdiff_t, ptrdiff)                           \
 	/* From unsigned */                                                    \
+	CAST_DEFINE_TRY_U_FROM_U(dst_type, dst_type_name, dst_type_max,        \
+				 unsigned char, uchar)                         \
 	CAST_DEFINE_TRY_U_FROM_U(dst_type, dst_type_name, dst_type_max,        \
 				 uint8_t, u8)                                  \
 	CAST_DEFINE_TRY_U_FROM_U(dst_type, dst_type_name, dst_type_max,        \
@@ -706,6 +710,8 @@ int cast_try_llong_from_str(long long *dst, const char *str);
 #define CAST_DEFINE_TRY_S(dst_type, dst_type_name, dst_type_max)               \
 	/* From signed */                                                      \
 	CAST_DEFINE_TRY_S_FROM_S(dst_type, dst_type_name, dst_type_max##_MIN,  \
+				 dst_type_max##_MAX, signed char, schar)       \
+	CAST_DEFINE_TRY_S_FROM_S(dst_type, dst_type_name, dst_type_max##_MIN,  \
 				 dst_type_max##_MAX, int8_t, i8)               \
 	CAST_DEFINE_TRY_S_FROM_S(dst_type, dst_type_name, dst_type_max##_MIN,  \
 				 dst_type_max##_MAX, int16_t, i16)             \
@@ -724,6 +730,8 @@ int cast_try_llong_from_str(long long *dst, const char *str);
 	CAST_DEFINE_TRY_S_FROM_S(dst_type, dst_type_name, dst_type_max##_MIN,  \
 				 dst_type_max##_MAX, ptrdiff_t, ptrdiff)       \
 	/* From unsigned */                                                    \
+	CAST_DEFINE_TRY_S_FROM_U(dst_type, dst_type_name, dst_type_max##_MAX,  \
+				 unsigned char, uchar)                         \
 	CAST_DEFINE_TRY_S_FROM_U(dst_type, dst_type_name, dst_type_max##_MAX,  \
 				 uint8_t, u8)                                  \
 	CAST_DEFINE_TRY_S_FROM_U(dst_type, dst_type_name, dst_type_max##_MAX,  \
@@ -763,6 +771,8 @@ int cast_try_llong_from_str(long long *dst, const char *str);
 #define CAST_DEFINE_TRY_F(dst_type, dst_type_name, mantissa_bits)              \
 	/* From signed */                                                      \
 	CAST_DEFINE_TRY_F_FROM_S(dst_type, dst_type_name, mantissa_bits,       \
+				 signed char, schar, SCHAR_MIN)                \
+	CAST_DEFINE_TRY_F_FROM_S(dst_type, dst_type_name, mantissa_bits,       \
 				 int8_t, i8, INT8_MIN)                         \
 	CAST_DEFINE_TRY_F_FROM_S(dst_type, dst_type_name, mantissa_bits,       \
 				 int16_t, i16, INT16_MIN)                      \
@@ -781,6 +791,8 @@ int cast_try_llong_from_str(long long *dst, const char *str);
 	CAST_DEFINE_TRY_F_FROM_S(dst_type, dst_type_name, mantissa_bits,       \
 				 ptrdiff_t, ptrdiff, PTRDIFF_MIN)              \
 	/* From unsigned */                                                    \
+	CAST_DEFINE_TRY_F_FROM_U(dst_type, dst_type_name, mantissa_bits,       \
+				 unsigned char, uchar)                         \
 	CAST_DEFINE_TRY_F_FROM_U(dst_type, dst_type_name, mantissa_bits,       \
 				 uint8_t, u8)                                  \
 	CAST_DEFINE_TRY_F_FROM_U(dst_type, dst_type_name, mantissa_bits,       \
@@ -807,6 +819,7 @@ CAST_DEFINE_TRY_U(uint8_t, u8, UINT8_MAX)
 CAST_DEFINE_TRY_U(uint16_t, u16, UINT16_MAX)
 CAST_DEFINE_TRY_U(uint32_t, u32, UINT32_MAX)
 CAST_DEFINE_TRY_U(uint64_t, u64, UINT64_MAX)
+CAST_DEFINE_TRY_U(unsigned char, uchar, UCHAR_MAX)
 CAST_DEFINE_TRY_U(unsigned, uint, UINT_MAX)
 CAST_DEFINE_TRY_U(unsigned short, ushort, USHRT_MAX)
 CAST_DEFINE_TRY_U(unsigned long, ulong, ULONG_MAX)
@@ -821,6 +834,7 @@ CAST_DEFINE_TRY_S(int8_t, i8, INT8)
 CAST_DEFINE_TRY_S(int16_t, i16, INT16)
 CAST_DEFINE_TRY_S(int32_t, i32, INT32)
 CAST_DEFINE_TRY_S(int64_t, i64, INT64)
+CAST_DEFINE_TRY_S(signed char, schar, SCHAR)
 CAST_DEFINE_TRY_S(int, int, INT)
 CAST_DEFINE_TRY_S(short, short, SHRT)
 CAST_DEFINE_TRY_S(long, long, LONG)
@@ -836,6 +850,7 @@ CAST_DEFINE_TRY_F(double, double, 54U)
 	F(uint16_t, u16)                                                       \
 	F(uint32_t, u32)                                                       \
 	F(uint64_t, u64)                                                       \
+	F(unsigned char, uchar)                                                \
 	F(unsigned, uint)                                                      \
 	F(unsigned short, ushort)                                              \
 	F(unsigned long, ulong)                                                \
@@ -846,6 +861,7 @@ CAST_DEFINE_TRY_F(double, double, 54U)
 	F(int16_t, i16)                                                        \
 	F(int32_t, i32)                                                        \
 	F(int64_t, i64)                                                        \
+	F(signed char, schar)                                                  \
 	F(int, int)                                                            \
 	F(short, short)                                                        \
 	F(long, long)                                                          \
@@ -1077,12 +1093,14 @@ CAST_DEFINE_FROM(double, double, double, double)
 	F(CAST_UNSIGNED_UPPER_LIMIT(double, uint64_t))                         \
 	/* END */
 
+#define CAST_NUMBERS_schar CAST_NUMBERS_i8
 #define CAST_NUMBERS_short CAST_NUMBERS_i16
 #define CAST_NUMBERS_int CAST_NUMBERS_i16
 #define CAST_NUMBERS_long CAST_NUMBERS_i32
 #define CAST_NUMBERS_llong CAST_NUMBERS_i64
 #define CAST_NUMBERS_ptrdiff CAST_NUMBERS_i16
 
+#define CAST_NUMBERS_uchar CAST_NUMBERS_u8
 #define CAST_NUMBERS_ushort CAST_NUMBERS_u16
 #define CAST_NUMBERS_uint CAST_NUMBERS_u16
 #define CAST_NUMBERS_ulong CAST_NUMBERS_u32
@@ -1106,6 +1124,8 @@ CAST_DEFINE_FROM(double, double, double, double)
 #define i32_fmt "%" PRId32
 #define i64_target int64_t
 #define i64_fmt "%" PRId64
+#define uchar_target unsigned char 
+#define uchar_fmt "%u"
 #define ushort_target unsigned short
 #define ushort_fmt "%u"
 #define uint_target unsigned int
@@ -1114,6 +1134,8 @@ CAST_DEFINE_FROM(double, double, double, double)
 #define ulong_fmt "%lu"
 #define ullong_target unsigned long long
 #define ullong_fmt "%llu"
+#define schar_target signed char 
+#define schar_fmt "%d"
 #define short_target short
 #define short_fmt "%d"
 #define int_target int
@@ -1157,6 +1179,8 @@ CAST_DEFINE_FROM(double, double, double, double)
 	EXACT_TYPE_TEST(float)                                                 \
 	EXACT_TYPE_TEST(double)                                                \
 	/* Variable types */                                                   \
+	TEST(schar, schar)                                                     \
+	TEST(schar, short)                                                    \
 	TEST(int, short)                                                       \
 	TEST(int, int)                                                         \
 	TEST(long, int)                                                        \
@@ -1166,6 +1190,8 @@ CAST_DEFINE_FROM(double, double, double, double)
 	TEST(llong, int)                                                       \
 	TEST(llong, long)                                                      \
 	TEST(llong, llong)                                                     \
+	TEST(uchar, schar)                                                     \
+	TEST(uchar, ushort)                                                    \
 	TEST(uint, ushort)                                                     \
 	TEST(uint, uint)                                                       \
 	TEST(ulong, ushort)                                                    \
