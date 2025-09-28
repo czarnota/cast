@@ -304,6 +304,7 @@
  * ```
  */
 
+#include <assert.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -887,6 +888,55 @@ static inline int try_bool_from_str(bool *val, const char *str)
 }
 CAST_DEFINE_FROM(bool, bool, const char *, str)
 
+#define CAST_ACCEPTABLE(x)                                                     \
+	_Generic((x),                                                          \
+	    char: (x),                                                         \
+	    signed char: (x),                                                  \
+	    signed short: (x),                                                 \
+	    signed int: (x),                                                   \
+	    signed long: (x),                                                  \
+	    signed long long: (x),                                             \
+	    unsigned char: (x),                                                \
+	    unsigned short: (x),                                               \
+	    unsigned int: (x),                                                 \
+	    unsigned long: (x),                                                \
+	    unsigned long long: (x))
+
+#define CAST_BIT_CAST(To, From, x)                                             \
+	(((union {                                                             \
+		 To to;                                                        \
+		 From from;                                                    \
+	 }){.from = (x)})                                                      \
+	     .to)
+
+/**
+ * Cast integer value to integer type T
+ *
+ * @param x    value to cast
+ *
+ * @return Value converted to a different integer type
+ */
+#define integer_cast(T, x)                                                     \
+	_Generic((T)(0),                                                       \
+	    char: CAST_BIT_CAST(T, unsigned char,                              \
+				(unsigned char)CAST_ACCEPTABLE(x)),            \
+	    signed char: CAST_BIT_CAST(T, unsigned char,                       \
+				       (unsigned char)CAST_ACCEPTABLE(x)),     \
+	    signed short: CAST_BIT_CAST(T, unsigned short,                     \
+					(unsigned short)CAST_ACCEPTABLE(x)),   \
+	    signed int: CAST_BIT_CAST(T, unsigned int,                         \
+				      (unsigned int)CAST_ACCEPTABLE(x)),       \
+	    signed long: CAST_BIT_CAST(T, unsigned long,                       \
+				       (unsigned long)CAST_ACCEPTABLE(x)),     \
+	    signed long long: CAST_BIT_CAST(                                   \
+		     T, unsigned long long,                                    \
+		     (unsigned long long)CAST_ACCEPTABLE(x)),                  \
+	    unsigned char: (unsigned char)CAST_ACCEPTABLE(x),                  \
+	    unsigned short: (unsigned short)CAST_ACCEPTABLE(x),                \
+	    unsigned int: (unsigned int)CAST_ACCEPTABLE(x),                    \
+	    unsigned long: (unsigned long)CAST_ACCEPTABLE(x),                  \
+	    unsigned long long: (unsigned long long)CAST_ACCEPTABLE(x))
+
 #ifdef CAST_IMPLEMENTATION
 #include <stdio.h>
 #include <inttypes.h>
@@ -1243,6 +1293,9 @@ static void cast_tests(void)
 	cast_dump("%f", float_from_int(16777216 * 2));
 	float f = 0;
 	cast_dump("%d", try_float_from_int(&f, 16777217 * 2));
+
+	cast_dump("%"PRIu64, integer_cast(uint64_t, -1));
+
 #define F(number) number,
 
 #define TEST(dst, src)                                                         \
