@@ -403,6 +403,26 @@ int cast_try_ullong_from_str(unsigned long long *dst, const char *str);
 int cast_try_llong_from_str(long long *dst, const char *str);
 
 /**
+ * This is wrapper for strtof(), but with easier error handling.
+ *
+ * @param dst   Pointer to variable, where conversion result will be stored.
+ * @param str   NULL-terminated string to convert to long long.
+ *
+ * @return 0 on success, non-zero on failure.
+ */
+int cast_try_float_from_str(float *dst, const char *str);
+
+/**
+ * This is wrapper for strtod(), but with easier error handling.
+ *
+ * @param dst   Pointer to variable, where conversion result will be stored.
+ * @param str   NULL-terminated string to convert to long long.
+ *
+ * @return 0 on success, non-zero on failure.
+ */
+int cast_try_double_from_str(double *dst, const char *str);
+
+/**
  * Define a wrapper conversion function, which will trigger panic handler
  * if conversion can't be performed.
  *
@@ -508,6 +528,24 @@ int cast_try_llong_from_str(long long *dst, const char *str);
 			return -1;                                             \
 		return try_##dst_type_name##_from_ullong(dst, tmp);            \
 	} \
+	CAST_DEFINE_FROM(dst_type, dst_type_name, const char *, str)
+
+/**
+ * Define a conversion function for floating point from string conversions.
+ *
+ * @param dst_type         Destination type.
+ * @param dst_type_name    Destination type name.
+ */
+#define CAST_DEFINE_TRY_F_FROM_STR(dst_type, dst_type_name)                    \
+	static inline int try_##dst_type_name##_from_str(dst_type *dst,        \
+							 const char *str)      \
+	{                                                                      \
+		dst_type tmp = 0U;                                             \
+		int ret = cast_try_##dst_type##_from_str(&tmp, str);           \
+		if (ret)                                                       \
+			return -1;                                             \
+		return 0;                                                      \
+	}                                                                      \
 	CAST_DEFINE_FROM(dst_type, dst_type_name, const char *, str)
 
 /**
@@ -813,7 +851,7 @@ int cast_try_llong_from_str(long long *dst, const char *str);
 	CAST_DEFINE_TRY_F_FROM_U(dst_type, dst_type_name, mantissa_bits,       \
 				 size_t, size)                                 \
 	/* From str */                                                         \
-	CAST_DEFINE_TRY_S_FROM_STR(dst_type, dst_type_name)                    \
+	CAST_DEFINE_TRY_F_FROM_STR(dst_type, dst_type_name)                    \
 	/* END */
 
 CAST_DEFINE_TRY_U(uint8_t, u8, UINT8_MAX)
@@ -1011,6 +1049,70 @@ int cast_try_llong_from_str(long long *dst, const char *str)
 	}
 
 	/* If there were not characters */
+	if (endptr == str || str[0] == '\0') {
+		return -1;
+	}
+
+	*dst = val;
+
+	return 0;
+}
+
+int cast_try_float_from_str(float *dst, const char *str)
+{
+	if (!dst)
+		return -1;
+	if (!str)
+		return -1;
+
+	errno = 0;
+
+	char *endptr = NULL;
+	float val = strtof(str, &endptr);
+
+	/* If there is an error */
+	if (errno != 0) {
+		return -1;
+	}
+
+	/* If there are unparsed characters */
+	if (*endptr != '\0') {
+		return -1;
+	}
+
+	/* If there were no characters */
+	if (endptr == str || str[0] == '\0') {
+		return -1;
+	}
+
+	*dst = val;
+
+	return 0;
+}
+
+int cast_try_double_from_str(double *dst, const char *str)
+{
+	if (!dst)
+		return -1;
+	if (!str)
+		return -1;
+
+	errno = 0;
+
+	char *endptr = NULL;
+	double val = strtod(str, &endptr);
+
+	/* If there is an error */
+	if (errno != 0) {
+		return -1;
+	}
+
+	/* If there are unparsed characters */
+	if (*endptr != '\0') {
+		return -1;
+	}
+
+	/* If there were no characters */
 	if (endptr == str || str[0] == '\0') {
 		return -1;
 	}
