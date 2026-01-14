@@ -540,8 +540,7 @@ int cast_try_double_from_str(double *dst, const char *str);
 	static inline int try_##dst_type_name##_from_str(dst_type *dst,        \
 							 const char *str)      \
 	{                                                                      \
-		dst_type tmp = 0U;                                             \
-		int ret = cast_try_##dst_type##_from_str(&tmp, str);           \
+		int ret = cast_try_##dst_type##_from_str(dst, str);            \
 		if (ret)                                                       \
 			return -1;                                             \
 		return 0;                                                      \
