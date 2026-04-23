@@ -646,6 +646,8 @@ int cast_try_double_from_str(double *dst, const char *str);
 		const double src_upper = CAST_UNSIGNED_UPPER_LIMIT(double,     \
 								   dst_type);  \
 		double trunced_src = trunc(src);                               \
+		if (trunced_src != src)                                        \
+			return -1;                                             \
 		if (trunced_src < 0.0 || src_upper <= trunced_src)             \
 			return -1;                                             \
 		*dst = (dst_type)trunced_src;                                  \
@@ -672,6 +674,8 @@ int cast_try_double_from_str(double *dst, const char *str);
 								 dst_min);     \
 		const double src_min = (double)(dst_min);                      \
 		double trunced_src = trunc(src);                               \
+		if (trunced_src != src)                                        \
+			return -1;                                             \
 		if (trunced_src < src_min || src_upper <= trunced_src)         \
 			return -1;                                             \
 		*dst = (dst_type)trunced_src;                                  \
