@@ -931,7 +931,6 @@ CAST_DEFINE_FROM(bool, bool, const char *, str)
 
 #define CAST_ACCEPTABLE(x)                                                     \
 	_Generic((x),                                                          \
-	    char: (x),                                                         \
 	    signed char: (x),                                                  \
 	    signed short: (x),                                                 \
 	    signed int: (x),                                                   \
@@ -959,8 +958,6 @@ CAST_DEFINE_FROM(bool, bool, const char *, str)
  */
 #define integer_cast(T, x)                                                     \
 	_Generic((T)(0),                                                       \
-	    char: CAST_BIT_CAST(T, unsigned char,                              \
-				(unsigned char)CAST_ACCEPTABLE(x)),            \
 	    signed char: CAST_BIT_CAST(T, unsigned char,                       \
 				       (unsigned char)CAST_ACCEPTABLE(x)),     \
 	    signed short: CAST_BIT_CAST(T, unsigned short,                     \
